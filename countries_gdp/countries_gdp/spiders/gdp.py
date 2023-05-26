@@ -1,5 +1,6 @@
 import scrapy
 from countries_gdp.items import CountriesGdpItem
+from scrapy.loader import ItemLoader
 
 
 class GdpSpider(scrapy.Spider):
@@ -9,13 +10,12 @@ class GdpSpider(scrapy.Spider):
 
     def parse(self, response):
         for country in response.css('table.wikitable.sortable tbody tr:not([class])'):
-            item = CountriesGdpItem()
 
-            item['country_name'] =  country.css('td:nth-child(1) a::text').get()
-            item['region'] = country.css('td:nth-child(2) a::text').get()
-            item['gdp'] = country.css('td:nth-child(3)::text').get()
-            item['year'] = country.css('td:nth-child(4)::text').get()
-
-            yield item
+            item = ItemLoader(item=CountriesGdpItem(), selector=country)
+            item.add_css('country_name', 'td:nth-child(1) a')
+            item.add_css('region', 'td:nth-child(2) a')
+            item.add_css('gdp', 'td:nth-child(3)')
+            item.add_css('year', 'td:nth-child(4)')
+            yield item.load_item()
 
 
