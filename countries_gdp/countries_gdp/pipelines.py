@@ -33,3 +33,15 @@ class SaveToDatabasePipeline:
     def close_spider(self, spider):
         self.con.close()
 
+class NoDuplicateCountryPipeline:
+    def __init__(self):
+        self.countries_seen = set()
+
+    def process_item(self, item, spider):
+        if item["country_name"] in self.countries_seen:
+            raise DropItem(f"Duplicate country found: {item}")
+        else:
+            self.countries_seen.add(item["country_name"])
+            return item
+
+
