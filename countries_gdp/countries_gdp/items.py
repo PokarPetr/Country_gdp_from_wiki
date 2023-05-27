@@ -1,5 +1,4 @@
 import re
-
 import scrapy
 from itemloaders.processors import TakeFirst, MapCompose
 from w3lib.html import remove_tags
